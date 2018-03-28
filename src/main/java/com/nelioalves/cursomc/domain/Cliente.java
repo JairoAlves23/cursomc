@@ -37,6 +37,10 @@ public class Cliente implements Serializable {
 	@ElementCollection // anotação para criar tabela fraca (tabela auxiliar)
 	@CollectionTable(name="TELEFONES") // NOME DA TABELA CRIADA
 	private Set<String> telefones = new HashSet<>();
+	
+	@OneToMany(mappedBy="cliente")
+	private List<Pedido> pedidos = new ArrayList<>();
+	
 
 	public Cliente() {
 
@@ -106,6 +110,17 @@ public class Cliente implements Serializable {
 	public void setTelefones(Set<String> telefones) {
 		this.telefones = telefones;
 	}
+	
+	
+	public List<Pedido> getPedidos() {
+		return pedidos;
+	}
+
+	public void setPedidos(List<Pedido> pedidos) {
+		this.pedidos = pedidos;
+	}
+	
+	
 
 	@Override
 	public int hashCode() {
@@ -132,7 +147,6 @@ public class Cliente implements Serializable {
 		return true;
 	}
 
-
-
+	
 
 }
