@@ -1,6 +1,8 @@
 package com.nelioalves.cursomc.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nelioalves.cursomc.domain.Categoria;
+import com.nelioalves.cursomc.dto.CategoriaDTO;
 import com.nelioalves.cursomc.services.CategoriaService;
 
 @RestController
@@ -28,12 +31,13 @@ public class CategoriaResource {
 		return ResponseEntity.ok().body(obj);
 	}
 
-	// explicação do metodo
-	// trabalha junto com Repositories/Service/Resource
-	// method tem quer ser post para enviar a requisição =>method=RequestMethod.POST
-	// @RequestBody Categoria obj => para enviar os dados Json no objeto
-	// objeto uri a assinatura para o envio da requisição
-	// ResponseEntity<Void> não retornar nada no metodo
+	/*explicação do metodo
+	1º => trabalha junto com Repositories/Service/Resource
+	2º =>method tem quer ser post para enviar a requisição =>method=RequestMethod.POST
+	3º =>@RequestBody Categoria obj => para enviar os dados Json no objeto
+	4º => objeto URI uri é a assinatura para o envio da requisição
+	5º => ResponseEntity<Void> não retornar nada no metodo */
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@RequestBody Categoria obj) {
 		obj = service.insert(obj);
@@ -55,6 +59,20 @@ public class CategoriaResource {
 
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	/* explicação do metodo
+	1º => Linha 2 do metodo transformar uma lista da classe Categoria para lista da classe CategoriaDTO
+	2º => list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList()) : este comando... 
+	faz a interação como um for no List<Categoria> list = service.findAll() */
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() {
+
+		List<Categoria> list = service.findAll(); 
+		List<CategoriaDTO> listDto = list.stream().map(obj -> new CategoriaDTO(obj))
+				.collect(Collectors.toList());	
+		return ResponseEntity.ok().body(listDto);
 	}
 	
 
