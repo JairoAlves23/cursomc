@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -39,18 +41,29 @@ public class CategoriaResource {
 	2º =>method tem quer ser post para enviar a requisição =>method=RequestMethod.POST
 	3º =>@RequestBody Categoria obj => para enviar os dados Json no objeto
 	4º => objeto URI uri é a assinatura para o envio da requisição
-	5º => ResponseEntity<Void> não retornar nada no metodo */
-	
+	5º => ResponseEntity<Void> não retornar nada no metodo 
+	6ºMudança no meto da Aula 36 passando o objeto de categoria para categoria DTO)
+	7º Criação da anotação @Valid na aula 36 para validar dados da anotações feitas no Objeto CategoriaDTO 
+	*/
+		
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody Categoria obj) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDTO) {
+		Categoria obj = service.fromDTO(objDTO);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 
 	}
 
+	/*explicação do metodo
+	*** Metodo para alterar uma categoria via PUT***
+	1ºMudança no meto da Aula 36 passando o objeto de categoria para categoria DTO)
+	2º Criação da anotação @Valid na aula 36 para validar dados da anotações feitas no Objeto CategoriaDTO 
+	*/
+	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDTO, @PathVariable Integer id) {
+		Categoria obj = service.fromDTO(objDTO);
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
@@ -82,9 +95,9 @@ public class CategoriaResource {
 	
 
 	/* explicação do metodo
-	*** Metodo para buscar todas as categorias***
-	1º => Linha 2 do metodo transformar uma lista da classe Categoria para lista da classe CategoriaDTO
-	2º => list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList()) : este comando... 
+	*** Metodo para buscar todas as categorias por paginação***
+	1º => @RequestParam para transformar os parametros em formato HTTP
+	2º => Page<CategoriaDTO> listDto = list.map(obj -> new CategoriaDTO(obj)) já incluso no java 8
 	faz a interação como um for no List<Categoria> list = service.findAll() */
 	
 	@RequestMapping(value="/page",method = RequestMethod.GET)
